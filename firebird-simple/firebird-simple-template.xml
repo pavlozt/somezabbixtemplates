@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>4.0</version>
+    <date>2020-09-11T15:28:49Z</date>
+    <groups>
+        <group>
+            <name>Templates/Databases</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Firebird</template>
+            <name>Firebird</name>
+            <description>Firebird Zabbix (single database, modify parameters in external scripts)</description>
+            <groups>
+                <group>
+                    <name>Templates/Databases</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Firebird</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>firebird connections</name>
+                    <key>firebird.connections</key>
+                    <delay>5m</delay>
+                    <applications>
+                        <application>
+                            <name>Firebird</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>firebird database size</name>
+                    <key>firebird.dbsize</key>
+                    <units>B</units>
+                    <applications>
+                        <application>
+                            <name>Firebird</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Firebird is running</name>
+                    <key>proc.num[fbserver]</key>
+                    <delay>5m</delay>
+                    <applications>
+                        <application>
+                            <name>Firebird</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}=0</expression>
+                            <name>Firebird server is DOWN in {HOST.NAME}</name>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <name>firebird connections</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Firebird</host>
+                        <key>firebird.connections</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>firebird database size</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Firebird</host>
+                        <key>firebird.dbsize</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>
