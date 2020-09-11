@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.0</version>
-    <date>2020-09-11T15:28:49Z</date>
+    <date>2020-09-11T15:35:54Z</date>
     <groups>
         <group>
             <name>Templates/Databases</name>
@@ -36,6 +36,7 @@
                 <item>
                     <name>firebird database size</name>
                     <key>firebird.dbsize</key>
+                    <delay>15m</delay>
                     <units>B</units>
                     <applications>
                         <application>
