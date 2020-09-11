@@ -1,0 +1,2 @@
+# somezabbixtemplates
+some zabbix templates
