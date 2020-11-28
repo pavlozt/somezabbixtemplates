@@ -1,19 +1,22 @@
 # LVM Cache monitoring template for [zabbix](https://github.com/zabbix/zabbix)
+## Short info
+ - Required zabbix version - 4.0
 
-Details about monitored values described in Linux Kernel Documentation https://www.kernel.org/doc/Documentation/device-mapper/cache.txt
+## What do these values mean?
+ Details about monitored values described in Linux Kernel Documentation https://www.kernel.org/doc/Documentation/device-mapper/cache.txt
 
 ## Screenshot
 ![](zabbix_lvm_cache.png )
 
 ## Usage
 1. Put file lvmcache.conf to /etc/zabbix/zabbix_agent.d/ 
-2. Put file sudoers_lvmcache to /etc/sudoers.d/  (you need `sudo` program installed) 
+2. Put file sudoers_lvmcache to /etc/sudoers.d/ (you need `sudo` program installed) 
 3. Put file vmcache to /etc/zabbix/scripts/. Then you can execut this file and test. This script produces JSON output.
 4. Import the
    [`lvmcache_template.xml`](lvmcache_template.xml)
    into your Zabbix server (click on the `Raw` button to download)
 5. Add the template to your host 
-6. Check if new data arrives at Last Data section and graphics.
+6. Check if new data arrives at Last Data section and Graphs.
 
  
 This script assumes that you have ONLY ONE  caching device and polls the first device. Therefore, it does not require configuration and specifying a device name.
@@ -21,7 +24,7 @@ Working with disks implies elevated privileges and therefore you need do not for
 
 
 
-Commands for debugging
+## Commands for debugging
  - dmsetup status
  - /etc/zabbix/scripts/lvmcache
  - zabbix_get -s  192.168.1.1 -k 'lvmcache.raw' (on zabbix server or zabbix proxy)

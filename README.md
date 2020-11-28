@@ -1,4 +1,5 @@
 # somezabbixtemplates
 My original zabbix templates for different systems
 
-Firebird simple - simple firebird monitoring template.
+- LVM Cache - linux LVM cache commonly used to speed up disks
+- Firebird simple - simple firebird monitoring template.
