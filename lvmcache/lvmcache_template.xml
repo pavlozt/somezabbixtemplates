@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>4.0</version>
-    <date>2020-11-28T20:24:05Z</date>
+    <date>2020-11-29T06:56:54Z</date>
     <groups>
         <group>
             <name>Templates/Operating Systems</name>
@@ -99,6 +99,10 @@ Details in kernel documentation https://www.kernel.org/doc/Documentation/device-
                         <step>
                             <type>JSONPATH</type>
                             <params>$.promotions</params>
+                        </step>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                            <params/>
                         </step>
                     </preprocessing>
                     <master_item>
