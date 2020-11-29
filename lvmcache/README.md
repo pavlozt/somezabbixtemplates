@@ -1,6 +1,6 @@
 # LVM Cache monitoring template for [zabbix](https://github.com/zabbix/zabbix)
 ## Short info
- - Required zabbix version - 4.0
+ - Required zabbix version - 4.4+
 
 ## What do these values mean?
  Details about monitored values described in Linux Kernel Documentation https://www.kernel.org/doc/Documentation/device-mapper/cache.txt
