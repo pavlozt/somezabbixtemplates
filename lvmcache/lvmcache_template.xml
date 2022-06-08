@@ -252,6 +252,31 @@ Details in kernel documentation https://www.kernel.org/doc/Documentation/device-
                     </master_item>
                 </item>
                 <item>
+                    <name>read_misses</name>
+                    <type>DEPENDENT</type>
+                    <key>lvmcache.read_misses</key>
+                    <delay>0</delay>
+                    <history>30d</history>
+                    <applications>
+                        <application>
+                            <name>LVM Cache</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <params>$.read_misses</params>
+                        </step>
+                        <step>
+                            <type>SIMPLE_CHANGE</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>lvmcache.raw</key>
+                    </master_item>
+                </item>
+                <item>
                     <name>write_hits</name>
                     <type>DEPENDENT</type>
                     <key>lvmcache.write_hits</key>
