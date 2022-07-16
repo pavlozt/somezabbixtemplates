@@ -27,6 +27,7 @@ echo "{
 \"used_cache_blocks\": $used_cache_blocks,
 \"total_cache_blocks\": $total_cache_blocks,
 \"read_hits\": $read_hits,
+\"read_misses\": $read_misses,
 \"write_hits\": $write_hits,
 \"write_misses\": $write_misses,
 \"demotions\": $demotions,
