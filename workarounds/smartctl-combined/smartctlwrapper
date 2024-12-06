@@ -1,0 +1,44 @@
+#!/bin/bash
+# smartctl wrapper script for zabbix agent2 smart plugin
+
+# Array of starting strings to check for
+# work only with "sat" or "nvme"
+filtered_args=("3ware" "cciss" "areca" "scsi")
+
+# Function to check if any argument starts with any string in the array
+check_for_starting_switches() {
+    for arg in "$@"; do
+        for start_string in "${filtered_args[@]}"; do
+            if [[ "$arg" == ${start_string}* ]]; then
+                # Empty json output
+                echo -n "{}"
+                exit 1
+            fi
+        done
+    done
+}
+
+# Function to replace --scan with --scan-open
+replace_scan_switch() {
+    local args=("$@")
+    local new_args=()
+
+    for arg in "${args[@]}"; do
+        if [[ "$arg" == "--scan" ]]; then
+            new_args+=("--scan-open")
+        else
+            new_args+=("$arg")
+        fi
+    done
+
+    echo "${new_args[@]}"
+}
+
+# Check the arguments
+check_for_starting_switches "$@"
+
+# Replace --scan with --scan-open
+modified_args=$(replace_scan_switch "$@")
+
+# Run smartctl with the modified arguments
+/usr/sbin/smartctl $modified_args | /usr/bin/jq --compact-output 'if (.ata_smart_data.self_test.status.string //"") | contains("in progress") then .ata_smart_data.self_test.status = {passed: true,value:0 } else . end'

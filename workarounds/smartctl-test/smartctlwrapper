@@ -1,0 +1,3 @@
+#!/bin/bash
+# smartctl wrapper script for zabbix agent2 smart plugin
+/usr/sbin/smartctl $@ | /usr/bin/jq --compact-output 'if (.ata_smart_data.self_test.status.string //"") | contains("in progress") then .ata_smart_data.self_test.status = {passed: true,value:0 } else . end'
