@@ -1,6 +1,6 @@
 # Wrappers for smartctl
 
-Unfortunately, the new smart zabbix agent2 plugin has several bugs that are slowly being fixed.
+Unfortunately, the new zabbix agent2 SMART plugin has several bugs that are slowly being fixed.
 I suggest a simple workaround using wrapper scripts.
 
 There are two fixes:
