@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  author: PavelZ
+  description: Exim Stats
+  license: GPLv3
+  min_ansible_version: '2.1'
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+        - buster
+
+  galaxy_tags:
+    - exim
+    - zabbix

@@ -1,0 +1,44 @@
+---
+
+- name: Deploy Exim statistics scripts
+  when: zabbixmon_exim
+  block:
+    - name: Create /etc/zabbix/scripts
+      ansible.builtin.file:
+        path: /etc/zabbix/scripts
+        state: directory
+        mode: "0755"
+        owner: root
+        group: root
+
+
+    - name: Install logtail (from Logcheck) package
+      ansible.builtin.apt:
+        name: logtail
+        state: present
+        update_cache: true
+      when: not zabbixmon_exim_custom.install_from_source
+
+
+    # here is original source https://logcheck.org/
+    - name: Install logtail2 perl script from local source
+      ansible.builtin.copy:
+        src: src/logtail2
+        dest: "{{ zabbixmon_exim_custom.logtail }}"
+        mode: '0755'
+      when: zabbixmon_exim_custom.install_from_source
+
+
+    - name: Deploy zabbix exim script
+      ansible.builtin.template:
+        src: exim.sh.j2
+        dest: /etc/zabbix/scripts/exim.sh
+        mode: '0755'
+
+    - name: Setup exim stats sender cron job
+      ansible.builtin.cron:
+        name: "Zabbix cron sender"
+        minute: "*/5"
+        hour: "*"
+        job: "/etc/zabbix/scripts/exim.sh"
+        state: present

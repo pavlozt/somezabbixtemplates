@@ -1,0 +1,89 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+      name: Templates/Applications
+  templates:
+    - uuid: 70161c46799f45528e7dd5a39137e66a
+      template: 'Exim Statistics'
+      name: 'Exim Statistics'
+      description: |
+        Exim Statistics from eximstats script.
+        Setup sender zabbix scripts
+        
+        https://github.com/pavlozt/
+      groups:
+        - name: Templates/Applications
+      items:
+        - uuid: 7606e77ae71742218602148bdd082f0d
+          name: 'Exim delivered bytes'
+          type: TRAP
+          key: exim.bytes_delivered
+          delay: '0'
+          description: 'Number of delivered bytes'
+        - uuid: 4188d2e2da304a90ba0a426ac352d32d
+          name: 'Exim received bytes'
+          type: TRAP
+          key: exim.bytes_received
+          delay: '0'
+          description: 'Number of received bytes'
+        - uuid: 309a1a62c0164de78ac5e639769034cc
+          name: 'Exim delivered'
+          type: TRAP
+          key: exim.delivered
+          delay: '0'
+          description: 'Number of delivered messages'
+        - uuid: a94fd0c945e0445fadba6e383f680380
+          name: 'Exim queue'
+          type: TRAP
+          key: exim.queue
+          delay: '0'
+          triggers:
+            - uuid: 7be5dbf99df342f1a4b8f1271a1a8a9d
+              expression: 'last(/Exim Statistics/exim.queue) > {$EXIM_MAIL_QUEUE_LIMIT}'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/Exim Statistics/exim.queue) < {$EXIM_MAIL_QUEUE_LIMIT}'
+              name: 'Exim mail queue is too big'
+              priority: HIGH
+        - uuid: 0e5f637f3b8c42e5a62d053ba9321748
+          name: 'Exim received'
+          type: TRAP
+          key: exim.received
+          delay: '0'
+          description: 'Number of received messages'
+        - uuid: b14bcfcf58b5413f84c4d2db91dd2716
+          name: 'Exim rejects'
+          type: TRAP
+          key: exim.rejects
+          delay: '0'
+          description: 'Number of reject events'
+        - uuid: 1140a95f1bc9402cb7b47e9b1af594d6
+          name: 'Exim remote delivered bytes'
+          type: TRAP
+          key: exim.remote_bytes_delivered
+          delay: '0'
+          description: 'Number of bytes sended to remote smtp destinations  (spam volume)'
+        - uuid: 99a5988ba6b34ee9aa729f2c7a4d1c73
+          name: 'Exim remote delivered'
+          type: TRAP
+          key: exim.remote_delivered
+          delay: '0'
+          description: 'Number of email sended to remote smtp destinations  (spams)'
+      tags:
+        - tag: application
+          value: exim
+        - tag: service
+          value: mail
+      macros:
+        - macro: '{$EXIM_MAIL_QUEUE_LIMIT}'
+          value: '100'
+  graphs:
+    - uuid: d6566a1057dc43bfab4893a2c86b733b
+      name: 'Exim Mail Queue Count'
+      graph_items:
+        - drawtype: FILLED_REGION
+          color: 0040FF
+          calc_fnc: MAX
+          item:
+            host: 'Exim Statistics'
+            key: exim.queue

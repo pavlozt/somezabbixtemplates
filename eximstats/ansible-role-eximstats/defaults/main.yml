@@ -1,0 +1,5 @@
+zabbixmon_exim: false
+zabbixmon_exim_custom:
+  mainlog: /var/log/exim4/mainlog
+  logtail: /usr/sbin/logtail2
+  install_from_source: false
