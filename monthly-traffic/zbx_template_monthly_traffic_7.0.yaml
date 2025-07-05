@@ -1,0 +1,67 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: 055d73f4444b418295bfbd552f92fa2a
+      template: 'Bandwidth Monthly'
+      name: 'Bandwidth Monthly'
+      description: |
+        A template for accounting for monthly traffic consumption based on the usual items from other standard Zabbix templates.
+        also contains warning triggers and macros.
+        
+        Dont forget setup host macros {$BW_MONTHLY_INTERFACE}, {$BW_MONTHLY_LIMIT_MB_IN} and {$BW_MONTHLY_LIMIT_MB_OUT}  Add standard zabbix templates for network items.
+      groups:
+        - name: Templates
+      discovery_rules:
+        - uuid: bd81cf9f2396442095191512381d16c4
+          name: 'Bandwith Monthly discovery'
+          type: SCRIPT
+          key: bw_monthly_discovery
+          delay: 1h
+          params: |
+            var ifname = '{$BW_MONTHLY_INTERFACE}';
+            var data = [];
+            data.push({
+              "{#IFNAME}": ifname
+            });
+            return JSON.stringify(data);
+          item_prototypes:
+            - uuid: 046735086d494f4788e22ade989ef759
+              name: 'Bandwidth monthy current IN'
+              type: CALCULATED
+              key: 'bw_monthly_in["{#IFNAME}"]'
+              delay: 1h
+              value_type: FLOAT
+              params: 'trendsum(//net.if.in["{#IFNAME}"],1M:now/M+1M)'
+              tags:
+                - tag: component
+                  value: network
+              trigger_prototypes:
+                - uuid: 71d53b7b9fc74ecaa4a9648f7a7db2e4
+                  expression: 'last(/Bandwidth Monthly/bw_monthly_in["{#IFNAME}"]) >= {$BW_MONTHLY_LIMIT_MB_IN}*1024*1024'
+                  name: 'Monthly limit reached for incoming traffic ({$BW_MONTHLY_LIMIT_MB_IN} MB)'
+                  priority: WARNING
+            - uuid: 8150d346cfe94196911d858dd853f1dc
+              name: 'Bandwidth monthy current OUT'
+              type: CALCULATED
+              key: 'bw_monthly_out["{#IFNAME}"]'
+              delay: 1h
+              value_type: FLOAT
+              params: 'trendsum(//net.if.out["{#IFNAME}"],1M:now/M+1M)'
+              tags:
+                - tag: component
+                  value: network
+              trigger_prototypes:
+                - uuid: 5688ffa8e3a4477ca2290c22b437ef3f
+                  expression: 'last(/Bandwidth Monthly/bw_monthly_out["{#IFNAME}"]) >= {$BW_MONTHLY_LIMIT_MB_OUT}*1024*1024'
+                  name: 'Monthly limit reached for outgoing traffic ({$BW_MONTHLY_LIMIT_MB_OUT} MB)'
+                  priority: WARNING
+      macros:
+        - macro: '{$BW_MONTHLY_INTERFACE}'
+          value: eth0
+        - macro: '{$BW_MONTHLY_LIMIT_MB_IN}'
+          value: '102400'
+        - macro: '{$BW_MONTHLY_LIMIT_MB_OUT}'
+          value: '102400'
