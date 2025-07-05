@@ -9,6 +9,12 @@ If you use these templates and have something to add — contributions are welco
 - [Exim Statistics](eximstats/) -  solution for parsing Exim logs and sending data to Zabbix
 - [Monthly Traffic Accounting](monthly-traffic/) - monitors monthly traffic consumption. Also example of advanced trends calculation
 
+## Templates in separate repositories
+
+Additionally, some complex scripted templates are designed as separate repositories for easy import:
+
+- [Postfix Stats](https://github.com/pavlozt/ansible-role-zabbixmon_postfix) - Ansible role for Postfix Statistics.
+
 
 ## Workarounds
 
