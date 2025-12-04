@@ -1,0 +1,57 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: a571c0d144b14fd4a87a9d9b2aa9fcd6
+      name: Templates/Applications
+  templates:
+    - uuid: 59cb0215661f43b6856a28d4fa4a08f4
+      template: 'Simple HTTP proxy'
+      name: 'Simple HTTP proxy'
+      description: 'Simple check for http proxy'
+      groups:
+        - name: Templates/Applications
+      items:
+        - uuid: ad560b4d8ed14717ab0b0a09768c7c07
+          name: 'Check URL via http proxy'
+          type: HTTP_AGENT
+          key: http_proxy.check
+          delay: 5m
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '.*({$HTTP_PROXY_CHECK.TEXT}).*'
+                - \1
+            - type: STR_REPLACE
+              parameters:
+                - '{$HTTP_PROXY_CHECK.TEXT}'
+                - '1'
+          url: '{$HTTP_PROXY_CHECK.TARGET_URL}'
+          status_codes: '301'
+          follow_redirects: 'NO'
+          http_proxy: '{$HTTP_PROXY_CHECK.PROXY_URL}'
+          tags:
+            - tag: component
+              value: network
+          triggers:
+            - uuid: 745bd4afe0f84e31b3e7e3e4db07433f
+              expression: |
+                nodata(/Simple HTTP proxy/http_proxy.check,15m)=1
+                or
+                min(/Simple HTTP proxy/http_proxy.check,15m)<1
+              name: 'HTTP proxy not avialable'
+              priority: HIGH
+      tags:
+        - tag: class
+          value: software
+        - tag: target
+          value: http-proxy
+      macros:
+        - macro: '{$HTTP_PROXY_CHECK.SERVER_URL}'
+          value: 'http://localhost:3128/'
+          description: 'Proxy URL(with password, etc)'
+        - macro: '{$HTTP_PROXY_CHECK.TARGET_URL}'
+          value: 'http://google.com/'
+          description: 'Target URL'
+        - macro: '{$HTTP_PROXY_CHECK.TEXT}'
+          value: Moved
+          description: 'Text pattern to check'
