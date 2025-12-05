@@ -3,7 +3,7 @@
 My original zabbix templates for different systems.
 
 If you use these templates and have something to add — contributions are welcome.
-
+- [Linux templates enhancements](linux/) - additional useful linux templates
 - [LVM Cache](lvmcache/) - linux LVM cache commonly used to speed up disks
 - [Firebird simple](firebird-simple/) - simple Firebird monitoring template
 - [Exim Statistics](eximstats/) -  solution for parsing Exim logs and sending data to Zabbix

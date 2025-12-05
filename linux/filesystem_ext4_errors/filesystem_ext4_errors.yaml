@@ -1,0 +1,57 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 846977d1dfed4968bc5f8bdb363285bc
+      name: 'Templates/Operating systems'
+  templates:
+    - uuid: da42c06c444a457497edb7cea366c1d6
+      template: 'Linux filesystem errors - ext4'
+      name: 'Linux filesystem errors - ext4'
+      groups:
+        - name: 'Templates/Operating systems'
+      discovery_rules:
+        - uuid: 9200ca29a03a4919ac724090ecc6e474
+          name: 'Filesystem ext4 discovery error data'
+          key: 'vfs.dir.get[/sys/fs/ext4,,,dir,,0]'
+          delay: 1h
+          item_prototypes:
+            - uuid: e82bbeef07944f7d8f06dda1ab680adf
+              name: 'Filesystem error count {#FSNAME}'
+              key: 'vfs.file.contents[{#ERRORS_COUNT_FILE}]'
+              delay: 5m
+              history: 7d
+              trends: '0'
+              trigger_prototypes:
+                - uuid: 263f27179c5e46a1bb365e2b294b642e
+                  expression: 'last(/Linux filesystem errors - ext4/vfs.file.contents[{#ERRORS_COUNT_FILE}])<>0'
+                  name: 'Linux: FS errors on [{#FSNAME}]'
+                  opdata: 'Errors count: {ITEM.LASTVALUE1}'
+                  priority: HIGH
+                  manual_close: 'YES'
+                  tags:
+                    - tag: scope
+                      value: availability
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - |
+                  var obj = JSON.parse(value);
+                  var result = [];
+                  
+                  for (var i = 0; i < obj.length; i++) {
+                      var name = obj[i].basename;
+                      if (name !== 'features') {
+                          result.push({
+                              '{#FSNAME}': name,
+                              '{#ERRORS_COUNT_FILE}': '/sys/fs/ext4/' + name + '/errors_count'
+                          });
+                      }
+                  }
+                  
+                  return JSON.stringify({data: result});
+                  
+      tags:
+        - tag: class
+          value: storage
+        - tag: target
+          value: linux
