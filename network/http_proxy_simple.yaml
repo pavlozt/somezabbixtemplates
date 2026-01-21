@@ -7,7 +7,10 @@ zabbix_export:
     - uuid: 59cb0215661f43b6856a28d4fa4a08f4
       template: 'Simple HTTP proxy'
       name: 'Simple HTTP proxy'
-      description: 'Simple check for http proxy'
+      description: |
+       Simple check for http proxy.
+       This template performs checks on the server or zabbix-proxy.
+       To check on zabbix-agent, you need a different template.
       groups:
         - name: Templates/Applications
       items:

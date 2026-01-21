@@ -6,7 +6,9 @@
 Automatically monitors all mounted EXT4 filesystems for critical errors.
 Template use files with mask `/sys/fs/ext4/*/errors_count`.
 
-This not will work with ZFS, etc.
+Usually in Zabbix another trigger fires earlier (Linux: FS [{#FSNAME}]: Filesystem has become read-only), but sometimes this one is needed.
+
+This solution not will work with other filesystems like ZFS.
 
 ## Macros used
 
