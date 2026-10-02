@@ -1,0 +1,200 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: cc782958b196461ba2aea150f74fb115
+      name: Templates/Applications
+  templates:
+    - uuid: e945b58cad3a42438253e667c4ad44be
+      template: 'Wireguard peers by Zabbix agent active'
+      name: 'Wireguard peers by Zabbix agent active'
+      description: |
+        Zabbix template for monitoring WireGuard peers in a classic WireGuard setup. It requires helper scripts deployed by the bundled Ansible role.
+      groups:
+        - name: Templates/Applications
+      items:
+        - uuid: 10df80cf4e0d472bbc322fda05458dfc
+          name: 'Wireguard peers master'
+          type: ZABBIX_ACTIVE
+          key: wireguard.peers
+          delay: 5m
+          history: '0'
+          value_type: TEXT
+          trends: '0'
+          description: 'Master item for Wireguard stats about peers'
+      discovery_rules:
+        - uuid: 9a5ad6e1820c42a6829475cea7db289f
+          name: 'Wireguard peer discovery'
+          type: DEPENDENT
+          key: wireguard.peer.discovery
+          delay: '0'
+          lifetime: 30d
+          enabled_lifetime_type: DISABLE_NEVER
+          description: 'Wireguard peer discovery rule'
+          item_prototypes:
+            - uuid: 9bf8ed3b91774401beb39cd7816e0818
+              name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Last handshake'
+              type: DEPENDENT
+              key: 'wireguard.handshake[{#PUBLIC_KEY}]'
+              delay: '0'
+              units: unixtime
+              description: 'Last handshake for peer {#PEER_NAME} (peerno {#PEERNO})'
+              tags:
+                - tag: component
+                  value: network
+                - tag: target
+                  value: wireguard
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$..[?(@.publicKey=="{#PUBLIC_KEY}")].latestHandshake.first()'
+              master_item:
+                key: wireguard.peers
+              trigger_prototypes:
+                - uuid: 4c3a9d4e3c5d4f6a8b7c9d0e1f2a3b4c
+                  expression: 'now()-last(/Wireguard peers by Zabbix agent active/wireguard.handshake[{#PUBLIC_KEY}])>{$WG.HANDSHAKE.MAX_AGE}'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'now()-last(/Wireguard peers by Zabbix agent active/wireguard.handshake[{#PUBLIC_KEY}])<{$WG.HANDSHAKE.MAX_AGE}'
+                  name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Peer is lost (no handshake)'
+                  priority: HIGH
+                  description: |
+                    No handshake from WireGuard peer {#PEER_NAME}
+                    for more than {$WG.HANDSHAKE.MAX_AGE} seconds.
+            - uuid: 8ef67847561a49b6aed7385df673bb01
+              name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Bytes received per second'
+              type: DEPENDENT
+              key: 'wireguard.rx[{#PUBLIC_KEY},bps]'
+              delay: '0'
+              units: Bps
+              description: 'Number of bytes received per second for peer {#PEER_NAME} (peerno {#PEERNO})'
+              tags:
+                - tag: component
+                  value: network
+                - tag: target
+                  value: wireguard
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$..[?(@.publicKey=="{#PUBLIC_KEY}")].transferRx.first()'
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              master_item:
+                key: wireguard.peers
+            - uuid: 61e36fed332c4853a3659f3bc653d0a5
+              name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Total bytes received'
+              type: DEPENDENT
+              key: 'wireguard.rx[{#PUBLIC_KEY}]'
+              delay: '0'
+              units: B
+              description: 'Number of bytes received for peer {#PEER_NAME} (peerno {#PEERNO})'
+              tags:
+                - tag: component
+                  value: network
+                - tag: target
+                  value: wireguard
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$..[?(@.publicKey=="{#PUBLIC_KEY}")].transferRx.first()'
+              master_item:
+                key: wireguard.peers
+            - uuid: f261275392b1442d8e0b34c17caad57c
+              name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Bytes sent per second'
+              type: DEPENDENT
+              key: 'wireguard.tx[{#PUBLIC_KEY},bps]'
+              delay: '0'
+              units: Bps
+              description: 'Number of bytes sent per second for peer {#PEER_NAME} (peerno {#PEERNO})'
+              tags:
+                - tag: component
+                  value: network
+                - tag: target
+                  value: wireguard
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$..[?(@.publicKey=="{#PUBLIC_KEY}")].transferTx.first()'
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+              master_item:
+                key: wireguard.peers
+            - uuid: 8e265b6849ed415a96af556c589e51e9
+              name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Total bytes sent'
+              type: DEPENDENT
+              key: 'wireguard.tx[{#PUBLIC_KEY}]'
+              delay: '0'
+              units: B
+              description: 'Number of bytes sent for peer {#PEER_NAME} (peerno {#PEERNO})'
+              tags:
+                - tag: component
+                  value: network
+                - tag: target
+                  value: wireguard
+              preprocessing:
+                - type: JSONPATH
+                  parameters:
+                    - '$..[?(@.publicKey=="{#PUBLIC_KEY}")].transferTx.first()'
+              master_item:
+                key: wireguard.peers
+          graph_prototypes:
+            - uuid: 14a18f2342574cc189b008cb33657db3
+              name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Network traffic'
+              graph_items:
+                - color: FF7043
+                  calc_fnc: ALL
+                  item:
+                    host: 'Wireguard peers by Zabbix agent active'
+                    key: 'wireguard.rx[{#PUBLIC_KEY},bps]'
+                - sortorder: '1'
+                  color: 0080FF
+                  calc_fnc: ALL
+                  item:
+                    host: 'Wireguard peers by Zabbix agent active'
+                    key: 'wireguard.tx[{#PUBLIC_KEY},bps]'
+          master_item:
+            key: wireguard.peers
+          lld_macro_paths:
+            - lld_macro: '{#PEERNO}'
+              path: $.peerNo
+            - lld_macro: '{#PEER_NAME}'
+              path: $.peerName
+            - lld_macro: '{#PUBLIC_KEY}'
+              path: $.publicKey
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $..peers.first()
+      tags:
+        - tag: class
+          value: service
+        - tag: scope
+          value: network
+        - tag: target
+          value: vpn
+        - tag: target
+          value: wireguard
+      macros:
+        - macro: '{$WG.HANDSHAKE.MAX_AGE}'
+          value: '600'
+      dashboards:
+        - uuid: e192074a82e74bd38086f26c04fd9a03
+          name: 'Wireguard network traffic'
+          pages:
+            - widgets:
+                - type: graphprototype
+                  name: 'Wireguard network traffic by peers'
+                  width: '72'
+                  height: '10'
+                  fields:
+                    - type: GRAPH_PROTOTYPE
+                      name: graphid
+                      value:
+                        host: 'Wireguard peers by Zabbix agent active'
+                        name: 'Wireguard {#PEER_NAME} ({#PEERNO}): Network traffic'
+                    - type: STRING
+                      name: reference
+                      value: AAAAA
+                    - type: INTEGER
+                      name: rows
+                      value: '2'

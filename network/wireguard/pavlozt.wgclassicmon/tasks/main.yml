@@ -1,0 +1,21 @@
+---
+- name: put zabbix conf
+  ansible.builtin.copy:
+    src: zabbix_agent2.d/wireguard_peers.conf
+    dest: /etc/zabbix/zabbix_agent2.d/wireguard_peers.conf
+
+- name: put wireguard-json.sh
+  ansible.builtin.copy:
+    src: scripts/wireguard-json.sh
+    dest: /etc/zabbix/scripts/wireguard-json.sh
+
+- name: put sudoers file
+  ansible.builtin.copy:
+    src: sudoers.d/user-zabbix_wireguard
+    dest: /etc/sudoers.d/user-zabbix_wireguard
+
+- name: restart zabbix-agent2 daemon
+  ansible.builtin.service:
+    name: zabbix-agent2
+    enabled: yes
+    state: restarted

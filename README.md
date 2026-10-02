@@ -8,6 +8,7 @@ If you use these templates and have something to add — contributions are welco
 - [Firebird simple](firebird-simple/) - simple Firebird monitoring template
 - [Exim Statistics](eximstats/) -  solution for parsing Exim logs and sending data to Zabbix
 - [Monthly Traffic Accounting](monthly-traffic/) - monitors monthly traffic consumption. Also example of advanced trends calculation
+- [Network](network/) - various network templates 
 
 ## Templates in separate repositories
 

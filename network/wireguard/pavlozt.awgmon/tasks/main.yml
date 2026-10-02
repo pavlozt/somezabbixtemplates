@@ -1,0 +1,21 @@
+---
+- name: put zabbix conf
+  ansible.builtin.copy:
+    src: zabbix_agent2.d/awg_peers.conf
+    dest: /etc/zabbix/zabbix_agent2.d/awg_peers.conf
+
+- name: put awg-json.py
+  ansible.builtin.copy:
+    src: scripts/awg-json.py
+    dest: /etc/zabbix/scripts/awg-json.py
+
+- name: put sudoers file
+  ansible.builtin.copy:
+    src: sudoers.d/user-zabbix_awg
+    dest: /etc/sudoers.d/user-zabbix_awg
+
+- name: restart zabbix-agent2 daemon
+  ansible.builtin.service:
+    name: zabbix-agent2
+    enabled: yes
+    state: restarted

@@ -1,0 +1,5 @@
+##
+## zabbix user privilege specifications
+##
+Defaults:zabbix !requiretty,!logfile, !syslog, !pam_session
+zabbix ALL=(root) NOPASSWD: /usr/bin/docker exec amnezia-awg2 cat /opt/amnezia/awg/clientsTable
