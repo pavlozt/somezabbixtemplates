@@ -5,7 +5,7 @@ import subprocess
 import time
 
 def run_docker_cmd(cmd):
-    """Execute command in docker container (without -it flag)"""
+    """Execute command in docker container """
     full_cmd = ["sudo", "docker", "exec", "amnezia-awg2"] + cmd
     return subprocess.check_output(full_cmd, text=True)
 
